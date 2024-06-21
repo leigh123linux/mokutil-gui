@@ -118,14 +118,14 @@ class KeyEnrollApp(QWidget):
                     for filename in os.listdir(self.certs_directory):
                         file_path = os.path.join(self.certs_directory, filename)
                         if os.path.isfile(file_path) or os.path.islink(file_path):
-                            subprocess.run(['rm', file_path], check=True, capture_output=True, text=True)
+                            os.remove(file_path)
                         elif os.path.isdir(file_path):
-                            subprocess.run(['rm', '-r', file_path], check=True, capture_output=True, text=True)
+                            os.rmdir(file_path)
                     self.label.setText("All key files removed from /etc/pki/akmods/certs/")
                     QMessageBox.information(self, "Success", "All key files removed from /etc/pki/akmods/certs/")
-                except subprocess.CalledProcessError as e:
-                    self.label.setText(f"Failed to delete files. Reason: {e.stderr}")
-                    QMessageBox.critical(self, "Error", f"Failed to delete files. Reason: {e.stderr}")
+                except Exception as e:
+                    self.label.setText(f"Failed to delete files. Reason: {str(e)}")
+                    QMessageBox.critical(self, "Error", f"Failed to delete files. Reason: {str(e)}")
 
         except subprocess.CalledProcessError as e:
             self.label.setText(f"Error: {e.stderr}")
@@ -136,6 +136,4 @@ if __name__ == "__main__":
     window = KeyEnrollApp()
     window.show()
     sys.exit(app.exec())
-
-
 
