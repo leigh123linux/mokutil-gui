@@ -53,6 +53,18 @@ class KeyEnrollApp(QWidget):
         self.setLayout(layout)
         self.certs_directory = "/etc/pki/akmods/certs/"
 
+    def check_secure_boot(self):
+        try:
+            sb_state = subprocess.run(['mokutil', '--sb-state'], check=True, capture_output=True, text=True)
+            if "SecureBoot enabled" not in sb_state.stdout:
+                self.label.setText("Secure Boot is not enabled.")
+                QMessageBox.warning(self, "Warning", "Secure Boot is not enabled. Exiting.")
+                sys.exit(1)
+        except subprocess.CalledProcessError as e:
+            self.label.setText(f"Error checking Secure Boot state: {e.stderr}")
+            QMessageBox.critical(self, "Error", f"Error checking Secure Boot state: {e.stderr}")
+            sys.exit(1)
+
     def create_and_enroll_signing_key(self):
         password = self.password_input.text()
         confirm_password = self.confirm_password_input.text()
@@ -134,6 +146,7 @@ class KeyEnrollApp(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = KeyEnrollApp()
+    window.check_secure_boot()
     window.show()
     sys.exit(app.exec())
 
