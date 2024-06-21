@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Mokutil Gui
+Comment=Create and enroll signing key for secure boot
+Exec=pkexec mokutil-gui
+Icon=mokutil-gui
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Settings;System;
